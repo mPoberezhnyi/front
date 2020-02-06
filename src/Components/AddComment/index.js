@@ -15,7 +15,6 @@ class AddComment extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.item)
         this.setState(state => ({
             comment: this.props.item.comment
         }))
@@ -26,7 +25,7 @@ class AddComment extends Component {
             alert('Please enter your comment')
         }
         else {
-            const comment = {
+            let comment = {
                 user: "User Name",
                 comment: this.state.comment,
                 created_at: this.props.item.created_at || dayjs(new Date()).format('YYYY-MM-DD HH:mm'),
@@ -35,7 +34,6 @@ class AddComment extends Component {
                 type: 'positive',
                 children: []
             }
-
             this.props.submitComment(comment);
             this.setState(state => ({
                 comment: ''

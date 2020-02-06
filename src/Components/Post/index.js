@@ -9,61 +9,36 @@ class Post extends Component {
     constructor() {
         super();
         this.state = {
-            comments: [],
-            commentList: []
+            comments: []
         }
 
         this.componentDidMount = this.componentDidMount.bind(this)
         this.getComments = this.getComments.bind(this)
-        this.updateComments = this.updateComments.bind(this)
         this.addComment = this.addComment.bind(this)
         this.removeComment = this.removeComment.bind(this)
         this.editComment = this.editComment.bind(this)
     }
 
     componentDidMount() {
-        this.updateComments()
+        this.getComments()
     }
 
     getComments() {
-        return axios.get('http://localhost:8000/discussion')
-    }
-
-    async updateComments() {
-        try {
-            let comments = await this.getComments()
-            this.setState(state => ({
-                comments: comments.data
-            }))
-
-            function addChildren(id) {
-                return comments.data.filter(item => !item.parent_id)
-            }
-
-            let newCommentsArray = comments.data.filter(item => !item.parent_id)
-
-            comments.data.forEach((item) => {
-                if (item.parent_id) {
-                    const parent = newCommentsArray.find(elem => elem._id === item.parent_id)
-                    parent.children = [...parent.children, item]
-                }
+        axios.get('http://localhost:8000/discussion')
+            .then((response) => {
+                this.setState(state => ({
+                    comments: response.data
+                }))
             })
-
-            this.setState(state => ({
-                commentList: [...newCommentsArray]
-            }))
-
-        } catch (e) {
-            alert(`can't load comments`)
-        }
+            .catch ((e) => {
+                alert(`can't delete comment`)
+            })
     }
-
-
 
     removeComment(id) {
         axios.delete(`http://localhost:8000/discussion/${id}`)
             .then((response) => {
-                this.updateComments()
+                this.getComments()
             })
             .catch ((e) => {
                 alert(`can't delete comment`)
@@ -71,16 +46,34 @@ class Post extends Component {
     }
 
     addComment(comment) {
+        console.log(comment)
         axios.post('http://localhost:8000/discussion', formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
             .then((responce) => {
-                this.updateComments()
+                if (comment.parent_id) {
+                    this.addChildrenComment(comment.parent_id, responce.data._id)
+                }
+                this.getComments()
             })
             .catch((e) => {
                 console.warn(e)
             })
+    }
+
+    addChildrenComment(id, child_id) {
+        let { user, comment, created_at, updated_at, parent_id, type, children} = this.state.comments.find(item => item._id === id)
+
+        this.editComment({
+            user,
+            comment,
+            created_at,
+            updated_at,
+            parent_id,
+            type,
+            children: [...children, child_id]
+        }, id)
     }
 
     editComment(comment, id) {
@@ -89,8 +82,7 @@ class Post extends Component {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
             .then((responce) => {
-                console.log(responce)
-                this.updateComments()
+                this.getComments()
             })
             .catch((e) => {
                 console.warn(e)
@@ -98,11 +90,14 @@ class Post extends Component {
     }
 
     render() {
+        const comments = this.state.comments.filter(item => !item.parent_id)
+
         return (
             <div className="container m-auto mb-16">
                 <img src={img} className="w-full h-auto mt-8" alt="post name"/>
                 <AddComment submitComment={this.addComment} />
-                <CommentsList comments={this.state.commentList}
+                <CommentsList comments={comments}
+                              allComments={this.state.comments}
                               removeComment={this.removeComment}
                               editComment={this.editComment}
                               replyToComment={this.addComment} />

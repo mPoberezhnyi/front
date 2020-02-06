@@ -29,8 +29,10 @@ class CommentsList extends Component {
 
     render() {
         const commentsList = this.sortByCreatedDate([...this.props.comments]).map((comment, key) => {
+
             return <Comment  key={key}
                              item={comment}
+                             allComments={this.props.allComments}
                              removeComment={this.removeComment}
                              editComment={this.editComment}
                              replyToComment={this.replyToComment} />
@@ -46,12 +48,15 @@ class CommentsList extends Component {
 
 CommentsList.propTypes = {
     comments: propTypes.array,
+    allComments: propTypes.array,
     removeComment: propTypes.func,
-    editComment: propTypes.func
+    editComment: propTypes.func,
+    replyToComment: propTypes.func
 }
 
 CommentsList.defaultProps = {
     comments: [],
+    allComments: [],
     removeComment: () => {},
     editComment: () => {},
     replyToComment: () => {}
