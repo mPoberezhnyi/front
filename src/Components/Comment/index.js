@@ -51,7 +51,7 @@ class Comment extends Component {
         const updatedAt = this.props.item.updated_at ? <span className="text-xs text-gray-700 mr-4">Updated at {this.props.item.updated_at}</span> : <span></span>
 
         const addNewComment = this.state.isReplyToComment ? <div className="pl-16">
-            <AddComment item={{parrent_id: this.props.item._id}}
+            <AddComment item={{parent_id: this.props.item._id}}
                         submitComment={this.submitNewComment}/>
         </div> : ''
 
@@ -124,7 +124,7 @@ Comment.defaultProps = {
         comment: "",
         created_at: "",
         updated_at: "",
-        parrent_id: "3",
+        parent_id: "3",
         type: 'positive',
         children: [],
     },

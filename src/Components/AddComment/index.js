@@ -31,7 +31,7 @@ class AddComment extends Component {
                 comment: this.state.comment,
                 created_at: this.props.item.created_at || dayjs(new Date()).format('YYYY-MM-DD HH:mm'),
                 updated_at: this.props.item.created_at ? dayjs(new Date()).format('YYYY-MM-DD HH:mm') : '',
-                parrent_id: this.props.item.parrent_id,
+                parent_id: '' || this.props.item.parent_id,
                 type: 'positive',
                 children: []
             }
@@ -90,7 +90,7 @@ AddComment.defaultProps = {
         comment: "",
         created_at: "",
         updated_at: "",
-        parrent_id: "0",
+        parent_id: "0",
         type: 'positive',
         children: [],
     },
