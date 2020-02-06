@@ -4,7 +4,6 @@ import propTypes from 'prop-types'
 import edit from '../../img/icons/edit.svg'
 import remove from '../../img/icons/delete.svg'
 import AddComment from "../AddComment"
-import CommentsList from "../CommentsList";
 
 class Comment extends Component {
     constructor() {
@@ -103,18 +102,10 @@ class Comment extends Component {
 
         const comment = this.state.isEditComment ? editCommentForm : commentForm
 
-        const replyComments = this.props.allComments.filter(item => this.props.item.children.includes(item._id))
 
         return (
             <div className="w-full mb-12">
                 {comment}
-                <div className="w-full pl-16">
-                    <CommentsList comments={replyComments}
-                                  allComments={this.props.allComments}
-                                  removeComment={this.remove}
-                                  editComment={this.editComment}
-                                  replyToComment={this.replyToComment} />
-                </div>
             </div>
         );
     }
@@ -125,7 +116,6 @@ Comment.propTypes = {
     removeComment: propTypes.func,
     editComment: propTypes.func,
     replyToComment: propTypes.func,
-    allComments: propTypes.array
 }
 
 Comment.defaultProps = {
@@ -141,8 +131,7 @@ Comment.defaultProps = {
     },
     removeComment: () => {},
     editComment: () => {},
-    replyToComment: () => {},
-    allComments: []
+    replyToComment: () => {}
 }
 
 export default Comment;

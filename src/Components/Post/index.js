@@ -46,7 +46,6 @@ class Post extends Component {
     }
 
     addComment(comment) {
-        console.log(comment)
         axios.post('http://localhost:8000/discussion', formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
@@ -90,14 +89,11 @@ class Post extends Component {
     }
 
     render() {
-        const comments = this.state.comments.filter(item => !item.parent_id)
-
         return (
             <div className="container m-auto mb-16">
                 <img src={img} className="w-full h-auto mt-8" alt="post name"/>
                 <AddComment submitComment={this.addComment} />
-                <CommentsList comments={comments}
-                              allComments={this.state.comments}
+                <CommentsList comments={this.state.comments}
                               removeComment={this.removeComment}
                               editComment={this.editComment}
                               replyToComment={this.addComment} />

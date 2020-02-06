@@ -32,7 +32,6 @@ class CommentsList extends Component {
 
             return <Comment  key={key}
                              item={comment}
-                             allComments={this.props.allComments}
                              removeComment={this.removeComment}
                              editComment={this.editComment}
                              replyToComment={this.replyToComment} />
@@ -48,7 +47,6 @@ class CommentsList extends Component {
 
 CommentsList.propTypes = {
     comments: propTypes.array,
-    allComments: propTypes.array,
     removeComment: propTypes.func,
     editComment: propTypes.func,
     replyToComment: propTypes.func
@@ -56,7 +54,6 @@ CommentsList.propTypes = {
 
 CommentsList.defaultProps = {
     comments: [],
-    allComments: [],
     removeComment: () => {},
     editComment: () => {},
     replyToComment: () => {}
