@@ -1,93 +1,60 @@
 import React, { Component } from 'react'
 import Comment from "../Comment";
-import axios from 'axios'
-import AddComment from "../AddComment"
-import formurlencoded from "form-urlencoded";
+import propTypes from "prop-types";
 
 class CommentsList extends Component {
     constructor() {
         super();
-        this.state = {
-            comments: []
-        }
 
-        this.componentDidMount = this.componentDidMount.bind(this)
-        this.getComments = this.getComments.bind(this)
-        this.addComment = this.addComment.bind(this)
         this.removeComment = this.removeComment.bind(this)
         this.editComment = this.editComment.bind(this)
+        this.replyToComment = this.replyToComment.bind(this)
     }
 
-    componentDidMount() {
-        this.getComments()
+    removeComment(comment) {
+        this.props.removeComment(comment)
     }
 
-    getComments() {
-        console.log('get comments')
-        axios.get('http://localhost:8000/discussion')
-            .then((response) => {
-                this.setState(state => ({
-                    comments: response.data
-                }))
-            })
-            .catch ((e) => {
-                alert(`can't load comments`)
-            })
-    }
-
-    removeComment(id) {
-        axios.delete(`http://localhost:8000/discussion/${id}`)
-            .then((response) => {
-                this.getComments()
-            })
-            .catch ((e) => {
-                alert(`can't delete comment`)
-            })
-    }
-
-    addComment(comment) {
-        axios.post('http://localhost:8000/discussion', formurlencoded(comment), {
-            headers: {
-                'Content-type': 'application/x-www-form-urlencoded'
-            }})
-            .then((responce) => {
-                this.getComments()
-            })
-            .catch((e) => {
-                console.warn(e)
-            })
-    }
-    
     editComment(comment, id) {
-        axios.put(`http://localhost:8000/discussion/${id}`, formurlencoded(comment), {
-            headers: {
-                'Content-type': 'application/x-www-form-urlencoded'
-            }})
-            .then((responce) => {
-                console.log(responce)
-                this.getComments()
-            })
-            .catch((e) => {
-                console.warn(e)
-            })
+        this.props.editComment(comment, id)
+    }
+
+    replyToComment(comment) {
+        this.props.replyToComment(comment)
+    }
+
+    sortByCreatedDate(array) {
+        return array.sort((a, b) => a.created_at < b.created_at ? -1 : 1)
     }
 
     render() {
-        const commentsList = this.state.comments.map((comment, key) => {
+        const commentsList = this.sortByCreatedDate([...this.props.comments]).map((comment, key) => {
             return <Comment  key={key}
                              item={comment}
-                             removeItem={this.removeComment}
-                             submitEditedComment={this.editComment}
-                             replyToComment={this.addComment} />
+                             removeComment={this.removeComment}
+                             editComment={this.editComment}
+                             replyToComment={this.replyToComment} />
         })
 
         return (
             <div className="w-full">
-                <AddComment submitComment={this.addComment} />
                 {commentsList}
             </div>
         );
     }
+}
+
+CommentsList.propTypes = {
+    comments: propTypes.array,
+    removeComment: propTypes.func,
+    editComment: propTypes.func
+}
+
+CommentsList.defaultProps = {
+    comments: [],
+    removeComment: () => {},
+    editComment: () => {},
+    replyToComment: () => {}
 }
 
 export default CommentsList;

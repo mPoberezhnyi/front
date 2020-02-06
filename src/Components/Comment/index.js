@@ -7,7 +7,7 @@ import AddComment from "../AddComment"
 
 class Comment extends Component {
     constructor() {
-        super();
+        super()
         this.state = {
             isReplyToComment: false,
             isEditComment: false
@@ -15,13 +15,13 @@ class Comment extends Component {
 
         this.remove = this.remove.bind(this)
         this.replyToComment = this.replyToComment.bind(this)
+        this.switchEditComment = this.switchEditComment.bind(this)
         this.editComment = this.editComment.bind(this)
-        this.submitEditedComment = this.submitEditedComment.bind(this)
         this.submitNewComment = this.submitNewComment.bind(this)
     }
 
     remove() {
-        this.props.removeItem(this.props.item._id)
+        this.props.removeComment(this.props.item._id)
     }
 
     replyToComment() {
@@ -30,15 +30,15 @@ class Comment extends Component {
         }))
     }
 
-    editComment() {
+    switchEditComment() {
         this.setState(state => ({
             isEditComment: !this.state.isEditComment
         }))
     }
 
-    submitEditedComment(comment) {
-        this.props.submitEditedComment(comment, this.props.item._id)
-        this.editComment()
+    editComment(comment) {
+        this.props.editComment(comment, this.props.item._id)
+        this.switchEditComment()
     }
 
     submitNewComment(comment) {
@@ -51,7 +51,7 @@ class Comment extends Component {
         const updatedAt = this.props.item.updated_at ? <span className="text-xs text-gray-700 mr-4">Updated at {this.props.item.updated_at}</span> : <span></span>
 
         const addNewComment = this.state.isReplyToComment ? <div className="pl-16">
-            <AddComment item={{parrent_id: this.props.item._id}}
+            <AddComment item={{_id: this.props.item._id}}
                         submitComment={this.submitNewComment}/>
         </div> : ''
 
@@ -74,7 +74,7 @@ class Comment extends Component {
                         <span className="text-base text-blue-500 cursor-pointer">
                                 <img src={edit}
                                      className="w-6 mr-4"
-                                     onClick={this.editComment}
+                                     onClick={this.switchEditComment}
                                      alt="edit icon" />
                             </span>
                         <span className="text-base text-blue-500 cursor-pointer"
@@ -97,7 +97,7 @@ class Comment extends Component {
 
         const editCommentForm = <div>
             <AddComment item={this.props.item}
-                        submitComment={this.submitEditedComment}/>
+                        submitComment={this.editComment}/>
         </div>
 
         const comment = this.state.isEditComment ? editCommentForm : commentForm
@@ -112,8 +112,8 @@ class Comment extends Component {
 
 Comment.propTypes = {
     item: propTypes.object,
-    removeItem: propTypes.func,
-    submitEditedComment: propTypes.func,
+    removeComment: propTypes.func,
+    editComment: propTypes.func,
     replyToComment: propTypes.func
 }
 
@@ -128,8 +128,8 @@ Comment.defaultProps = {
         type: 'positive',
         children: [],
     },
-    removeItem: () => {},
-    submitEditedComment: () => {},
+    removeComment: () => {},
+    editComment: () => {},
     replyToComment: () => {}
 }
 
