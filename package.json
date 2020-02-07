@@ -34,7 +34,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prod": "cross-env NODE_ENV=production webpack --no-progress"
   },
   "eslintConfig": {
     "extends": "react-app"
