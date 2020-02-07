@@ -24,7 +24,7 @@ class Post extends Component {
     }
 
     getComments() {
-        axios.get('http://localhost:8000/discussion')
+        axios.get('http://77.120.108.21:8000/discussion')
             .then((response) => {
                 this.setState(state => ({
                     comments: response.data
@@ -36,7 +36,7 @@ class Post extends Component {
     }
 
     removeComment(id) {
-        axios.delete(`http://localhost:8000/discussion/${id}`)
+        axios.delete(`http://77.120.108.21:8000/discussion/${id}`)
             .then((response) => {
                 this.getComments()
             })
@@ -46,7 +46,7 @@ class Post extends Component {
     }
 
     addComment(comment) {
-        axios.post('http://localhost:8000/discussion', formurlencoded(comment), {
+        axios.post('http://77.120.108.21:8000/discussion', formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
@@ -76,7 +76,7 @@ class Post extends Component {
     }
 
     editComment(comment, id) {
-        axios.put(`http://localhost:8000/discussion/${id}`, formurlencoded(comment), {
+        axios.put(`http://77.120.108.21:8000/discussion/${id}`, formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
