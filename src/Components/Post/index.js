@@ -9,36 +9,64 @@ class Post extends Component {
     constructor() {
         super();
         this.state = {
-            comments: []
+            comments: [],
+            commentsList: []
         }
 
         this.componentDidMount = this.componentDidMount.bind(this)
         this.getComments = this.getComments.bind(this)
+        this.updateComments = this.updateComments.bind(this)
         this.addComment = this.addComment.bind(this)
         this.removeComment = this.removeComment.bind(this)
         this.editComment = this.editComment.bind(this)
+        this.getChildren = this.getChildren.bind(this)
+        this.writeChildren = this.writeChildren.bind(this)
     }
 
-    componentDidMount() {
-        this.getComments()
+    async componentDidMount() {
+        await this.updateComments()
+        console.log(this.state.comments)
+        console.log(this.state.commentsList)
     }
 
     getComments() {
-        axios.get('https://77.120.108.21:8000/discussion')
-            .then((response) => {
-                this.setState(state => ({
-                    comments: response.data
-                }))
-            })
-            .catch ((e) => {
-                alert(`can't delete comment`)
-            })
+        return axios.get('https://localhost:8000/discussion')
+    }
+
+    getChildren(id) {
+        return this.state.comments.filter(item => item.parent_id === id.toString())
+    }
+
+    writeChildren(comments) {
+        comments.forEach(item => {
+            item.children = this.getChildren(item._id)
+            if (item.children.length > 0) {
+                this.writeChildren(item.children)
+            }
+        })
+    }
+
+    async updateComments() {
+        try {
+            const comments = await this.getComments()
+            console.log(comments.data)
+            await this.setState(state => ({
+                comments: comments.data
+            }))
+            let newComments = this.getChildren('0')
+            this.writeChildren(newComments)
+            this.setState(state => ({
+                commentsList: newComments
+            }))
+        } catch (e) {
+            alert(`can't get comment`)
+        }
     }
 
     removeComment(id) {
-        axios.delete(`https://77.120.108.21:8000/discussion/${id}`)
-            .then((response) => {
-                this.getComments()
+        axios.delete(`https://localhost:8000/discussion/${id}`)
+            .then(async (response) => {
+                await this.updateComments()
             })
             .catch ((e) => {
                 alert(`can't delete comment`)
@@ -46,42 +74,25 @@ class Post extends Component {
     }
 
     addComment(comment) {
-        axios.post('https://77.120.108.21:8000/discussion', formurlencoded(comment), {
+        axios.post('https://localhost:8000/discussion', formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
-            .then((responce) => {
-                if (comment.parent_id) {
-                    this.addChildrenComment(comment.parent_id, responce.data._id)
-                }
-                this.getComments()
+            .then(async (responce) => {
+                await this.updateComments()
             })
             .catch((e) => {
                 console.warn(e)
             })
     }
 
-    addChildrenComment(id, child_id) {
-        let { user, comment, created_at, updated_at, parent_id, type, children} = this.state.comments.find(item => item._id === id)
-
-        this.editComment({
-            user,
-            comment,
-            created_at,
-            updated_at,
-            parent_id,
-            type,
-            children: [...children, child_id]
-        }, id)
-    }
-
     editComment(comment, id) {
-        axios.put(`https://77.120.108.21:8000/discussion/${id}`, formurlencoded(comment), {
+        axios.put(`https://localhost:8000/discussion/${id}`, formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
-            .then((responce) => {
-                this.getComments()
+            .then(async (responce) => {
+                await this.updateComments()
             })
             .catch((e) => {
                 console.warn(e)
@@ -93,7 +104,7 @@ class Post extends Component {
             <div className="container m-auto mb-16">
                 <img src={img} className="w-full h-auto mt-8" alt="post name"/>
                 <AddComment submitComment={this.addComment} />
-                <CommentsList comments={this.state.comments}
+                <CommentsList comments={this.state.commentsList}
                               removeComment={this.removeComment}
                               editComment={this.editComment}
                               replyToComment={this.addComment} />

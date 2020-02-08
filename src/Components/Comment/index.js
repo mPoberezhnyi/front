@@ -4,6 +4,7 @@ import propTypes from 'prop-types'
 import edit from '../../img/icons/edit.svg'
 import remove from '../../img/icons/delete.svg'
 import AddComment from "../AddComment"
+import CommentsList from "../CommentsList";
 
 class Comment extends Component {
     constructor() {
@@ -102,10 +103,15 @@ class Comment extends Component {
 
         const comment = this.state.isEditComment ? editCommentForm : commentForm
 
+        const replyCommentsList = this.props.item.children.length > 0 ? <div className="pl-16">
+            <CommentsList comments={this.props.item.children} />
+        </div> : <div></div>
+
 
         return (
             <div className="w-full mb-12">
                 {comment}
+                {replyCommentsList}
             </div>
         );
     }
