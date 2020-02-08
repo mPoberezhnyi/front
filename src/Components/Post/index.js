@@ -21,12 +21,11 @@ class Post extends Component {
         this.editComment = this.editComment.bind(this)
         this.getChildren = this.getChildren.bind(this)
         this.writeChildren = this.writeChildren.bind(this)
+        this.removeChildren = this.removeChildren.bind(this)
     }
 
     async componentDidMount() {
         await this.updateComments()
-        console.log(this.state.comments)
-        console.log(this.state.commentsList)
     }
 
     getComments() {
@@ -34,7 +33,7 @@ class Post extends Component {
     }
 
     getChildren(id) {
-        return this.state.comments.filter(item => item.parent_id === id.toString())
+        return this.state.comments.filter(item => item.parent_id === id)
     }
 
     writeChildren(comments) {
@@ -49,7 +48,6 @@ class Post extends Component {
     async updateComments() {
         try {
             const comments = await this.getComments()
-            console.log(comments.data)
             await this.setState(state => ({
                 comments: comments.data
             }))
@@ -62,9 +60,25 @@ class Post extends Component {
             alert(`can't get comment`)
         }
     }
+    
+    removeChildren(comments) {
+        comments.forEach(item => {
+            if (item.children) this.removeChildren(item.children)
 
-    removeComment(id) {
-        axios.delete(`https://localhost:8000/discussion/${id}`)
+            axios.delete(`https://localhost:8000/discussion/${item._id}`)
+                .then(async (response) => {
+                    await this.updateComments()
+                })
+                .catch ((e) => {
+                    alert(`can't delete comment`)
+                })
+        })
+    }
+
+    removeComment(item) {
+        if (item.children) this.removeChildren(item.children)
+
+        axios.delete(`https://localhost:8000/discussion/${item._id}`)
             .then(async (response) => {
                 await this.updateComments()
             })

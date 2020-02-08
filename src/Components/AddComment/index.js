@@ -30,7 +30,7 @@ class AddComment extends Component {
                 comment: this.state.comment,
                 created_at: this.props.item.created_at || dayjs(new Date()).format('YYYY-MM-DD HH:mm'),
                 updated_at: this.props.item.created_at ? dayjs(new Date()).format('YYYY-MM-DD HH:mm') : '',
-                parent_id: this.props.item._id || '0',
+                parent_id: this.props.item.parent_id || '0',
                 type: 'positive',
                 children: []
             }

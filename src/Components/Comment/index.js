@@ -22,7 +22,7 @@ class Comment extends Component {
     }
 
     remove() {
-        this.props.removeComment(this.props.item._id)
+        this.props.removeComment(this.props.item)
     }
 
     replyToComment() {
@@ -52,7 +52,7 @@ class Comment extends Component {
         const updatedAt = this.props.item.updated_at ? <span className="text-xs text-gray-700 mr-4">Updated at {this.props.item.updated_at}</span> : <span></span>
 
         const addNewComment = this.state.isReplyToComment ? <div className="pl-16">
-            <AddComment item={{_id: this.props.item._id}}
+            <AddComment item={{parent_id: this.props.item._id}}
                         submitComment={this.submitNewComment}/>
         </div> : ''
 
@@ -104,7 +104,10 @@ class Comment extends Component {
         const comment = this.state.isEditComment ? editCommentForm : commentForm
 
         const replyCommentsList = this.props.item.children.length > 0 ? <div className="pl-16">
-            <CommentsList comments={this.props.item.children} />
+            <CommentsList comments={this.props.item.children}
+                          removeComment={this.props.removeComment}
+                          editComment={this.props.editComment}
+                          replyToComment={this.props.replyToComment} />
         </div> : <div></div>
 
 
