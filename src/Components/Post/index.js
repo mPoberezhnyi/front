@@ -29,7 +29,7 @@ class Post extends Component {
     }
 
     getComments() {
-        return axios.get('https://77.120.108.21:8000/discussion')
+        return axios.get('http://77.120.108.21:8030/discussion')
     }
 
     getChildren(id) {
@@ -65,7 +65,7 @@ class Post extends Component {
         comments.forEach(item => {
             if (item.children) this.removeChildren(item.children)
 
-            axios.delete(`https://77.120.108.21:8000/discussion/${item._id}`)
+            axios.delete(`http://77.120.108.21:8030/discussion/${item._id}`)
                 .then(async (response) => {
                     await this.updateComments()
                 })
@@ -78,7 +78,7 @@ class Post extends Component {
     removeComment(item) {
         if (item.children) this.removeChildren(item.children)
 
-        axios.delete(`https://77.120.108.21:8000/discussion/${item._id}`)
+        axios.delete(`http://77.120.108.21:8030/discussion/${item._id}`)
             .then(async (response) => {
                 await this.updateComments()
             })
@@ -88,7 +88,7 @@ class Post extends Component {
     }
 
     addComment(comment) {
-        axios.post('https://77.120.108.21:8000/discussion', formurlencoded(comment), {
+        axios.post('http://77.120.108.21:8030/discussion', formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
@@ -101,7 +101,7 @@ class Post extends Component {
     }
 
     editComment(comment, id) {
-        axios.put(`https://77.120.108.21:8000/discussion/${id}`, formurlencoded(comment), {
+        axios.put(`http://77.120.108.21:8030/discussion/${id}`, formurlencoded(comment), {
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded'
             }})
