@@ -7,15 +7,17 @@ class AddComment extends Component {
     constructor() {
         super()
         this.state = {
-            comment: ''
+            comment: '',
+            name: ''
         }
         this.submit = this.submit.bind(this)
-        this.changeComment = this.changeComment.bind(this)
+        this.changeInput = this.changeInput.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
     }
 
     componentDidMount() {
         this.setState(state => ({
+            name: this.props.item.user,
             comment: this.props.item.comment
         }))
     }
@@ -26,7 +28,7 @@ class AddComment extends Component {
         }
         else {
             const comment = {
-                user: "User Name",
+                user: this.state.name || 'anonymous',
                 comment: this.state.comment,
                 created_at: this.props.item.created_at || dayjs(new Date()).format('YYYY-MM-DD HH:mm'),
                 updated_at: this.props.item.created_at ? dayjs(new Date()).format('YYYY-MM-DD HH:mm') : '',
@@ -42,11 +44,10 @@ class AddComment extends Component {
         }
     }
 
-    changeComment(e) {
-        const comment = e.target.value
-        this.setState(state => ({
-            comment
-        }));
+    changeInput(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
     }
 
     render() {
@@ -57,14 +58,20 @@ class AddComment extends Component {
                         <img src={avatar} alt="user name" />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold">Your Name</p>
+                        <input type="text"
+                               className="py-2 text-2xl font-bold"
+                               placeholder="Enter your name"
+                               name="name"
+                               defaultValue={this.state.name}
+                               onChange={this.changeInput}/>
                     </div>
                 </div>
                 <div className="pl-16">
                     <textarea className="w-full text-base mb-4 resize-none h-40 w-full border border-gray-300 rounded-sm p-4 focus:outline-none"
                               placeholder="Enter your comment..."
+                              name="comment"
                               defaultValue={this.state.comment}
-                              onChange={this.changeComment}></textarea>
+                              onChange={this.changeInput}></textarea>
                 </div>
                 <div className="w-full flex justify-end">
                     <button onClick={this.submit}
